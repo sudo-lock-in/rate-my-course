@@ -6,13 +6,14 @@ A Streamlit web application for CUNY students to rate and review courses based o
 
 - **CUNY College Selection**: Choose from all CUNY colleges (Lehman, Hunter, Queens, Brooklyn, City, Baruch, York, NYC College of Technology, or Other)
 - **Course Information**: Input course code and name
+- **Professor Information**: Add professor name (optional) with link to Rate My Professor
 - **Multi-Criteria Ratings**: Rate courses on:
   - Difficulty Level (1-5)
   - Usefulness (1-5)
   - Instructor Quality (1-5)
 - **Comments Section**: Add detailed feedback about the course
 - **Database Integration**: Reviews are persisted in SQLite database
-- **Review Display**: View all submitted reviews with ratings and comments
+- **Review Display**: View all submitted reviews with ratings, comments, and professor information
 - **Search & Filter**: Easily find reviews by course or college
 
 ## Installation

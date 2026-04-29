@@ -43,7 +43,13 @@ with col3:
 st.divider()
 
 # Rating section
-st.subheader("Your Rating")
+st.subheader("⭐ Your Rating")
+
+col1, col2 = st.columns(2)
+with col1:
+    professor_name = st.text_input("Professor Name (optional)", placeholder="e.g., Dr. John Smith")
+with col2:
+    st.info("💡 **Learn more about professor ratings on [Rate My Professor](https://www.ratemyprofessors.com)**")
 
 col1, col2, col3 = st.columns(3)
 
@@ -71,6 +77,7 @@ with col2:
                 college=college,
                 course_code=course_code,
                 course_name=course_name,
+                professor_name=professor_name if professor_name else None,
                 difficulty=difficulty,
                 usefulness=usefulness,
                 instructor_quality=instructor_quality,
@@ -99,6 +106,8 @@ if not all_reviews.empty:
             with col1:
                 st.write(f"**{review['course_code']} - {review['course_name']}**")
                 st.write(f"*{review['college']}*")
+                if pd.notna(review['professor_name']) and review['professor_name']:
+                    st.write(f"👨‍🏫 Professor: {review['professor_name']}")
                 st.write(f"📝 {review['comments']}")
             with col2:
                 st.metric("Difficulty", review['difficulty'], delta=None)

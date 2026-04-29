@@ -16,6 +16,7 @@ def init_db():
             college TEXT NOT NULL,
             course_code TEXT NOT NULL,
             course_name TEXT NOT NULL,
+            professor_name TEXT,
             difficulty INTEGER NOT NULL,
             usefulness INTEGER NOT NULL,
             instructor_quality INTEGER NOT NULL,
@@ -27,16 +28,16 @@ def init_db():
     conn.commit()
     conn.close()
 
-def add_review(college, course_code, course_name, difficulty, usefulness, instructor_quality, comments):
+def add_review(college, course_code, course_name, difficulty, usefulness, instructor_quality, comments, professor_name=None):
     """Add a new review to the database."""
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
     
     cursor.execute('''
         INSERT INTO reviews 
-        (college, course_code, course_name, difficulty, usefulness, instructor_quality, comments)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    ''', (college, course_code, course_name, difficulty, usefulness, instructor_quality, comments))
+        (college, course_code, course_name, professor_name, difficulty, usefulness, instructor_quality, comments)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (college, course_code, course_name, professor_name, difficulty, usefulness, instructor_quality, comments))
     
     conn.commit()
     conn.close()
