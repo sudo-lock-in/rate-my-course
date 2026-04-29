@@ -1,53 +1,35 @@
 import streamlit as st
 import pandas as pd
+from database import init_db, add_review, get_all_reviews, get_course_stats, get_college_stats, get_college_reviews
 
-st.set_page_config(page_title="Rate My Course", layout="centered")
+# Initialize database
+init_db()
 
-st.title("📚 Rate My Course")
-st.write("Share your course experience and help other students choose!")
+st.set_page_config(page_title="CUNY Rate My Course", layout="wide")
 
-# Sidebar for course input
-with st.sidebar:
-    st.header("Course Information")
-    
-    # Subject category selection
-    subject_category = st.radio(
-        "Subject Category",
-        options=["STEM", "Liberal Arts"],
-        help="STEM courses are generally harder, Liberal Arts are generally easier"
-    )
-    
-    # Course number (difficulty level)
-    course_number = st.selectbox(
-        "Course Number (Difficulty Level)",
-        options=[100, 200, 300, 400],
-        format_func=lambda x: f"{x}s - {'Easiest' if x == 100 else 'Easy' if x == 200 else 'Difficult' if x == 300 else 'Most Difficult'}"
-    )
-    
-    st.divider()
-    st.caption("100s = Easiest | 400s = Most Difficult")
-
-# Main content area
-col1, col2 = st.columns(2)
-
-with col1:
-    st.metric("Subject Category", subject_category)
-    
-with col2:
-    st.metric("Course Level", f"{course_number}s")
-
+# Header
+st.title("📚 CUNY Rate My Course")
+st.write("Help your fellow CUNY students choose the best courses!")
 st.divider()
 
-# Course details form
-st.subheader("Course Details")
-
-col1, col2 = st.columns(2)
+# Course Information Section
+st.subheader("📋 Course Information")
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    course_code = st.text_input("Course Code (e.g., CS101, BIO201)")
-    
+    college = st.selectbox(
+        "CUNY College",
+        options=["Lehman College", "CUNY NYC College of Technology", "Hunter College", "Queens College", "Brooklyn College", "City College", "Baruch College", "York College", "Other"],
+        help="Select your CUNY college"
+    )
+
 with col2:
-    course_name = st.text_input("Course Name")
+    course_code = st.text_input("Course Code", placeholder="e.g., CS101")
+
+with col3:
+    course_name = st.text_input("Course Name", placeholder="e.g., Intro to Python")
+
+st.divider()
 
 # Rating section
 st.subheader("Your Rating")
@@ -64,27 +46,53 @@ with col3:
     instructor_quality = st.slider("Instructor Quality", 1, 5, 3, help="1 = Poor, 5 = Excellent")
 
 # Comments
-comments = st.text_area("Additional Comments", placeholder="Share your thoughts about this course...")
-
-# Submit button
-if st.button("Submit Review", type="primary", use_container_width=True):
-    if course_code and course_name:
-        st.success("✅ Review submitted successfully!")
-        st.json({
-            "course_code": course_code,
-            "course_name": course_name,
-            "subject_category": subject_category,
-            "course_level": f"{course_number}s",
-            "difficulty": difficulty,
-            "usefulness": usefulness,
-            "instructor_quality": instructor_quality,
-            "comments": comments if comments else "No comments"
-        })
-    else:
-        st.error("❌ Please fill in Course Code and Course Name")
+comments = st.text_area("Additional Comments", placeholder="Share your thoughts about this course...", height=120)
 
 st.divider()
 
-# Display existing courses (placeholder)
-st.subheader("Recent Reviews")
-st.info("Reviews will appear here as they're submitted. This feature will be connected to a database soon.")
+# Submit button
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2:
+    if st.button("Submit Review", type="primary", use_container_width=True):
+        if course_code and course_name:
+            # Add review to database
+            add_review(
+                college=college,
+                course_code=course_code,
+                course_name=course_name,
+                difficulty=difficulty,
+                usefulness=usefulness,
+                instructor_quality=instructor_quality,
+                comments=comments if comments else "No comments"
+            )
+            st.success("✅ Review submitted successfully!")
+        else:
+            st.error("❌ Please fill in Course Code and Course Name")
+
+st.divider()
+
+# Display recent reviews from database
+st.subheader("📖 Recent Reviews from CUNY Students")
+
+# Get all reviews
+all_reviews = get_all_reviews()
+
+if not all_reviews.empty:
+    # Display stats
+    st.write(f"**Total Reviews: {len(all_reviews)}**")
+    
+    # Show reviews in a nice format
+    for idx, review in all_reviews.head(10).iterrows():
+        with st.container():
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.write(f"**{review['course_code']} - {review['course_name']}**")
+                st.write(f"*{review['college']}*")
+                st.write(f"📝 {review['comments']}")
+            with col2:
+                st.metric("Difficulty", review['difficulty'], delta=None)
+                st.metric("Usefulness", review['usefulness'], delta=None)
+                st.metric("Instructor", review['instructor_quality'], delta=None)
+            st.divider()
+else:
+    st.info("No reviews yet. Be the first to submit a review!")
