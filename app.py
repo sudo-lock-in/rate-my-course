@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
 from database import init_db, add_review, get_all_reviews, get_course_stats, get_college_stats, get_college_reviews
 
 # Initialize database
@@ -7,9 +8,19 @@ init_db()
 
 st.set_page_config(page_title="CUNY Rate My Course", layout="wide")
 
-# Header
-st.title("📚 CUNY Rate My Course")
-st.write("Help your fellow CUNY students choose the best courses!")
+# Header with logo
+col1, col2, col3 = st.columns([1, 4, 1])
+
+with col1:
+    try:
+        logo = Image.open("cunylogo.jpg")
+        st.image(logo, width=400)
+    except:
+        st.write("📚")
+
+with col2:
+    st.title("CUNY Rate My Course")
+    st.write("Help your fellow CUNY students choose the best courses!")
 st.divider()
 
 # Course Information Section

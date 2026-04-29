@@ -40,12 +40,24 @@ The app will open in your browser at `http://localhost:8501`
 
 ```
 rate-my-course/
-├── app.py              # Main Streamlit application
-├── database.py         # Database initialization and queries
-├── requirements.txt    # Python dependencies
-├── reviews.db          # SQLite database (created automatically)
-└── README.md          # This file
+├── .streamlit/
+│   └── config.toml        # Streamlit theme configuration (blue & white)
+├── app.py                 # Main Streamlit application
+├── database.py            # Database initialization and queries
+├── create_logo.py         # Logo generation script
+├── cuny_logo.png          # CUNY logo (auto-generated)
+├── requirements.txt       # Python dependencies
+├── reviews.db             # SQLite database (created automatically)
+└── README.md             # This file
 ```
+
+## Theme
+
+The app features a professional blue and white color scheme:
+- **Primary Color**: Bright Blue (#0066cc)
+- **Background**: Clean White (#ffffff)
+- **Secondary Background**: Light Blue (#e6f0ff)
+- **Text Color**: Dark Gray (#1a1a1a)
 
 ## Future Enhancements
 
